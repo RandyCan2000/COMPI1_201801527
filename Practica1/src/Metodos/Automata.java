@@ -10,5 +10,9 @@ package Metodos;
  * @author Usuario
  */
 public class Automata {
+    // Automatas Conjuntos
     
+    public void AutomataConjuntos(String Linea){
+    
+    }
 }
