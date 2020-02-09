@@ -4,18 +4,23 @@
  * and open the template in the editor.
  */
 package Interfaz;
+import Metodos.Automata;
 import java.awt.Image;
 import java.io.File;
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
+import TDA.*;
+import TDA.Error;
+import Globales.*;
+import java.util.Stack;
 /**
  *
  * @author Usuario
  */
 public class Editor extends javax.swing.JFrame {
-
+    Globales G=new Globales();
     /**
      * Creates new form Editor
      */
@@ -67,6 +72,11 @@ public class Editor extends javax.swing.JFrame {
 
         jButton1.setFont(new java.awt.Font("Century Schoolbook", 0, 12)); // NOI18N
         jButton1.setText("Analizar");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setFont(new java.awt.Font("Century Schoolbook", 0, 12)); // NOI18N
         jButton2.setText("Generar Automata");
@@ -181,6 +191,14 @@ public class Editor extends javax.swing.JFrame {
              System.err.println("ABRIO/CERRO CARPETA DEL ARBOL");
          }
     }//GEN-LAST:event_jTree1MouseClicked
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        Automata A=new Automata();
+        G.ERROR=new Stack<Error>();
+        G.TOKEN=new Stack<Token>();
+        A.AutomataConjuntos(jEditorPane1.getText());
+
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     
     public void CargarJTree(){

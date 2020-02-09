@@ -98,6 +98,11 @@ public class Error {
     public void setEsperado(String Esperado) {
         this.Esperado = Esperado;
     }
+
+    @Override
+    public String toString() {
+        return this.ID+":"+this.Lexema+":"+this.Esperado+":"+this.fila+":"+this.Columna;
+    }
     
     
     

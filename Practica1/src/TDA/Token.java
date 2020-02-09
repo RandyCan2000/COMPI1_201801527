@@ -48,6 +48,11 @@ public class Token {
     public void setLexema(String Lexema) {
         this.Lexema = Lexema;
     }
+
+    @Override
+    public String toString() {
+        return this.ID+" "+this.Lexema;
+    }
     
     
 }
