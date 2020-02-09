@@ -28,6 +28,10 @@ public class Automata {
         for(int Col=0;Col<Linea.length();Col++){
             Columna++;
             Caracter=Linea.charAt(Col);
+            if(Caracter=='\n'||Caracter=='\t'){}
+            else if((int)Caracter<=31||(int)Caracter>=127){
+                Estado=200;
+                ERRC=new Error(G.ERROR.size(),Character.toString(Caracter),Fila,Columna,"NO VALIDO");}
             if(Caracter=='\n'){Fila++;Columna=0;}
             switch(Estado){
                 case 0:
@@ -167,7 +171,7 @@ public class Automata {
                         System.out.println(b.toString());
                         Token="";
                         G.TOKEN.add(b);
-                        Estado=1;
+                        Estado=11;
                     }else{
                         Estado=200;
                         ERRC=new Error(G.ERROR.size(),Token,Fila,Columna,"->");}
@@ -213,6 +217,63 @@ public class Automata {
                     G.TOKEN.add(a);
                     Token="";
                     Estado=1;
+                    break;
+                case 11:
+                    if(Caracter=='{'){
+                        Token Z=new Token(G.TOKEN.size(),"{");
+                        System.out.println(Z.toString());
+                        G.TOKEN.add(Z);
+                        Estado=12;
+                    }
+                    else if(Caracter==' '||Caracter=='\t'){}
+                    else if(Caracter=='\n'){
+                        Estado=200;
+                        ERRC=new Error(G.ERROR.size(),"SALTO DE LINEA",Fila,Columna,"-");
+                    }
+                    else{
+                        Estado=15;
+                    }
+                    break;
+                case 12: 
+                    if(Caracter=='\t'||Caracter==' '){}
+                    else{
+                    Token=Character.toString(Caracter);
+                    Estado=13;
+                    }
+                    break;
+                case 13:
+                    if(Caracter=='}'){
+                        Token Z=new Token(G.TOKEN.size(),Token);
+                        System.out.println(Z.toString());
+                        G.TOKEN.add(Z);
+                        Token Z1=new Token(G.TOKEN.size(),"}");
+                        System.out.println(Z1.toString());
+                        G.TOKEN.add(Z1);
+                        Token="";
+                        Estado=14;
+                    }else if(Caracter==','){
+                        Token+=Caracter;
+                        Estado=13;
+                    }else if(Caracter==' '){
+                        Estado=200;
+                        ERRC=new Error(G.ERROR.size()," ",Fila,Columna,"Valores sin Espacio en Conjunto");
+                    }else{
+                        Token+=Caracter;
+                        Estado=13;
+                    }
+                    break;
+                case 14: 
+                    if(Caracter=='\t'||Caracter==' '){}
+                    else if(Caracter==';'){
+                        Token Z1=new Token(G.TOKEN.size(),";");
+                        System.out.println(Z1.toString());
+                        G.TOKEN.add(Z1);
+                        Token="";
+                        Estado=1;
+                    }else{
+                        Estado=200;
+                        ERRC=new Error(G.ERROR.size(),Character.toString(Caracter),Fila,Columna,";");
+                    }
                     break;
                     //error automata conjuntos
                 case 200:

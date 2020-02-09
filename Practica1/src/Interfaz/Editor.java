@@ -15,6 +15,7 @@ import TDA.*;
 import TDA.Error;
 import Globales.*;
 import Metodos.*;
+import java.awt.event.KeyEvent;
 import java.util.Stack;
 /**
  *
@@ -61,6 +62,11 @@ public class Editor extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jEditorPane1.setFont(new java.awt.Font("Century Schoolbook", 0, 14)); // NOI18N
+        jEditorPane1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jEditorPane1KeyPressed(evt);
+            }
+        });
         jScrollPane1.setViewportView(jEditorPane1);
 
         jTree1.setFont(new java.awt.Font("Century Schoolbook", 0, 12)); // NOI18N
@@ -202,6 +208,10 @@ public class Editor extends javax.swing.JFrame {
         A.AutomataConjuntos(jEditorPane1.getText());
 
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jEditorPane1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jEditorPane1KeyPressed
+
+    }//GEN-LAST:event_jEditorPane1KeyPressed
 
     
     public void CargarJTree(){

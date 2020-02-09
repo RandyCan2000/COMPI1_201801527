@@ -16,7 +16,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public class METODOS {
     public String AbrirArchivos(){
         String Texto="";
-        JFileChooser explorador = new JFileChooser("\\DESKTOP\\");
+        JFileChooser explorador = new JFileChooser();
         FileNameExtensionFilter filtro = new FileNameExtensionFilter("ARCHIVOS TXT", "TXT");
         explorador.setFileFilter(filtro);
         //Le cambiamos el titulo
