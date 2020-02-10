@@ -231,7 +231,16 @@ public class Automata {
                         ERRC=new Error(G.ERROR.size(),"SALTO DE LINEA",Fila,Columna,"-");
                     }
                     else{
-                        Estado=15;
+                        try{
+                            int q=Integer.parseInt(Character.toString(Caracter));
+                            System.out.println(q);
+                            Token=Character.toString(Caracter);
+                            Estado=18;
+                        }catch(Exception E){
+                            Token=Character.toString(Caracter);
+                            Estado=15;
+                        }
+                        
                     }
                     break;
                 case 12: 
@@ -273,6 +282,95 @@ public class Automata {
                     }else{
                         Estado=200;
                         ERRC=new Error(G.ERROR.size(),Character.toString(Caracter),Fila,Columna,";");
+                    }
+                    break;
+                case 15:
+                    if(Caracter==' '||Caracter=='\t'){}
+                    else if(Caracter=='~'){
+                        Token+=Caracter;
+                        Estado=16;
+                    }else {
+                        Estado=200;
+                        ERRC=new Error(G.ERROR.size(),Character.toString(Caracter),Fila,Columna,"~");
+                    }
+                    break;
+                case 16:
+                    if(Caracter==' '||Caracter=='\t'){}
+                    else if(Caracter=='\n'){
+                        Estado=200;
+                        ERRC=new Error(G.ERROR.size(),Character.toString(Caracter),Fila,Columna,"Letra");
+                    }else{
+                        try{
+                            int q=Integer.parseInt(Character.toString(Caracter));
+                            System.out.println(q);
+                            Estado=200;
+                            ERRC=new Error(G.ERROR.size(),Character.toString(Caracter),Fila,Columna,"Letra");
+                        }catch(Exception E){
+                            Token+=Caracter;
+                            Token Z1=new Token(G.TOKEN.size(),Token);
+                            System.out.println(Z1.toString());
+                            G.TOKEN.add(Z1);
+                            Token="";
+                            Estado=17;
+                        }
+                    }
+                    break;
+                case 17:
+                    if(Caracter==' '||Caracter=='\t'){}
+                    else if(Caracter==';'){
+                        Token Z1=new Token(G.TOKEN.size(),";");
+                        System.out.println(Z1.toString());
+                        G.TOKEN.add(Z1);
+                        Token="";
+                        Estado=1;
+                    }
+                    else {
+                        Estado=200;
+                        ERRC=new Error(G.ERROR.size(),"SALTO DE LINEA",Fila,Columna,";");
+                    }
+                    break;
+                case 18:
+                    if(Caracter=='\n'||Caracter==' '||Caracter=='\n'){
+                        Estado=200;
+                        ERRC=new Error(G.ERROR.size(),"SIN ESPACIOS EN CONJUNTO",Fila,Columna,"~");
+                    }
+                    else if(Caracter=='~'){
+                        Token+=Caracter;
+                        Estado=19;
+                    }else {
+                        try{
+                            int q=Integer.parseInt(Character.toString(Caracter));
+                            System.out.println(q);
+                            Token+=Caracter;
+                        }catch(Exception E){
+                            Estado=200;
+                            ERRC=new Error(G.ERROR.size(),Character.toString(Caracter),Fila,Columna,"Digito"); 
+                        } 
+                    }
+                    break;
+                case 19:
+                    if(Caracter=='\n'||Caracter==' '||Caracter=='\t'){
+                        Estado=200;
+                        ERRC=new Error(G.ERROR.size(),"SIN ESPACIOS EN CONJUNTO",Fila,Columna,"DIGITO");
+                    }else if(Caracter==';'){
+                        Token Z1=new Token(G.TOKEN.size(),Token);
+                        System.out.println(Z1.toString());
+                        G.TOKEN.add(Z1);
+                        Z1=new Token(G.TOKEN.size(),";");
+                        System.out.println(Z1.toString());
+                        G.TOKEN.add(Z1);
+                        Token="";
+                        Estado=1;
+                    }
+                    else{
+                        try{
+                            int q=Integer.parseInt(Character.toString(Caracter));
+                            System.out.println(q);
+                            Token+=Caracter;
+                        }catch(Exception E){
+                            Estado=200;
+                            ERRC=new Error(G.ERROR.size(),Character.toString(Caracter),Fila,Columna,"Digito");   
+                        }
                     }
                     break;
                     //error automata conjuntos
