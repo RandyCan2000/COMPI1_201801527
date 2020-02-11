@@ -17,5 +17,5 @@ public class Globales {
     
     public static Stack<Token> TOKEN;
     public static Stack<Error> ERROR;
-    
+    public static String Ruta;
 }

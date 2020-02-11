@@ -6,10 +6,12 @@
 package Metodos;
 
 import java.io.*;
-import javax.swing.JFileChooser;
+import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import Globales.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 /**
  *
  * @author Usuario
@@ -47,13 +49,16 @@ public class METODOS {
          archivo = explorador.getSelectedFile();
             //y guardar una ruta
             String ruta = archivo.getPath();
+            G.Ruta=archivo.getPath();
          fr = new FileReader (archivo);
          br = new BufferedReader(fr);
 
          // Lectura del fichero
          String linea;
-         while((linea=br.readLine())!=null)
+         while((linea=br.readLine())!=null){
             Texto+=linea+"\n";
+         }
+            fr.close();
         }
     catch(Exception e){}
     return Texto;
@@ -80,5 +85,41 @@ public class METODOS {
             model.addRow(new Object[]{G.TOKEN.get(i).getID(),G.TOKEN.get(i).getLexema()});
         }
         return model;
+    }
+    
+    public void GuardarArchivo(String Texto){
+        try {
+            PrintWriter pw = null;
+            FileWriter Fw=new FileWriter (G.Ruta);
+            pw = new PrintWriter(Fw);
+            String[] Text=Texto.split("\n");
+            for(String Linea: Text){
+                pw.println(Linea);
+            }
+            pw.close();
+        } catch (IOException ex) {
+            Logger.getLogger(METODOS.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void GuardarComo(String Texto){
+        JFileChooser explorador = new JFileChooser();
+        String ruta = "";
+        try{
+        if(explorador.showSaveDialog(null)==explorador.APPROVE_OPTION){
+            ruta = explorador.getSelectedFile().getAbsolutePath();
+            PrintWriter pw = null;
+            FileWriter Fw=new FileWriter (ruta);
+            pw = new PrintWriter(Fw);
+            String[] Text=Texto.split("\n");
+            for(String Linea: Text){
+                pw.print(Linea);
+            }
+            G.Ruta=ruta;
+            pw.close();
+        }
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
     }
 }
