@@ -16,7 +16,6 @@ import TDA.Error;
 public class Automata {
     // Automatas Conjuntos y Comentarios
     public Globales G=new Globales();
-    
     int Estado=0;
     String Token="";
     boolean AceptadoConjuntos=true;
@@ -25,6 +24,9 @@ public class Automata {
     int Fila=1;
     int Columna=1;
     public void AutomataConjuntos(String Linea){
+        boolean ESPACIOS=false;
+        int CorchetesExpReg=0;
+        int ComillasExpReg=0;
         for(int Col=0;Col<Linea.length();Col++){
             Columna++;
             Caracter=Linea.charAt(Col);
@@ -62,7 +64,9 @@ public class Automata {
                         Estado=9;
                         Token="<";
                     }else{
-                        // Nombre Expresiones Regulares o Validaciones de Expreciones Regulares
+                        // Nombre Expresiones
+                        Estado=20;
+                        Token=Character.toString(Caracter);
                     }
                     break;
                 case 2:
@@ -371,6 +375,142 @@ public class Automata {
                             Estado=200;
                             ERRC=new Error(G.ERROR.size(),Character.toString(Caracter),Fila,Columna,"Digito");   
                         }
+                    }
+                    break;
+                case 20:
+                    if(Caracter==' '||Caracter=='\t'){
+                        Token Z1=new Token(G.TOKEN.size(),Token);
+                        System.out.println(Z1.toString());
+                        G.TOKEN.add(Z1);
+                        Token="";
+                        Estado=21;
+                    }
+                    else if(Caracter=='-'){
+                        Token Z1=new Token(G.TOKEN.size(),Token);
+                        System.out.println(Z1.toString());
+                        G.TOKEN.add(Z1);
+                        Token="-";
+                        Estado=22;
+                    }
+                    else if(Caracter=='\n'){
+                        Estado=200;
+                        ERRC=new Error(G.ERROR.size(),"SALTO DE LINEA",Fila,Columna,"->");   
+                    }
+                    else{
+                        Token+=Caracter;
+                    }
+                    break; 
+                case 21:
+                    if(Caracter==' '||Caracter=='\t'){}
+                    else if(Caracter=='\n'){
+                        Estado=200;
+                        ERRC=new Error(G.ERROR.size(),"SALTO DE LINEA",Fila,Columna,"->");   
+                    }
+                    else if(Caracter=='-'){
+                        Token+=Caracter;
+                        Estado=22;
+                    }else{
+                        Estado=200;
+                        ERRC=new Error(G.ERROR.size(),Character.toString(Caracter),Fila,Columna,"->");   
+                    }
+                    break;
+                case 22:
+                    //signo mayor que >
+                    if((int)Caracter==62){
+                        Token+=Caracter;
+                        Token Z1=new Token(G.TOKEN.size(),Token);
+                        System.out.println(Z1.toString());
+                        G.TOKEN.add(Z1);
+                        Token="";
+                        Estado=23;
+                    }else{
+                        Estado=200;
+                        ERRC=new Error(G.ERROR.size(),Character.toString(Caracter),Fila,Columna,"->");   
+                    }
+                    break;
+                case 23:
+                    if(Caracter==' '||Caracter=='\t'){}
+                    else if(Caracter=='\n'){
+                        Estado=200;
+                        ERRC=new Error(G.ERROR.size(),"SALTO DE LINEA",Fila,Columna,"EXPRESION REGULAR");   
+                    }else {
+                        Col--;
+                        Estado=24;
+                    }
+                    break;
+                case 24:
+                    if(Caracter=='\"'){
+                        Token+=Caracter;
+                        ComillasExpReg++;
+                        ESPACIOS=true;
+                        Estado=25;
+                    }else if(Caracter=='{'){
+                        Token+=Caracter;
+                        CorchetesExpReg++;
+                        Estado=25;
+                    }else if(Caracter==';'){
+                        Estado=1;
+                        Token Z1=new Token(G.TOKEN.size(),Token);
+                        System.out.println(Z1.toString());
+                        G.TOKEN.add(Z1);
+                        if(CorchetesExpReg!=0){
+                        Estado=200;
+                        ERRC=new Error(G.ERROR.size(),Token,Fila,Columna,"FALTAN CORCHETES DE CIERRE");  
+                        }else if(ComillasExpReg!=0){
+                        Estado=200;
+                        ERRC=new Error(G.ERROR.size(),Token,Fila,Columna,"FALTAN COMILLAS DE CIERRE");  
+                        }
+                        Token="";
+                        Z1=new Token(G.TOKEN.size(),";");
+                        System.out.println(Z1.toString());
+                        G.TOKEN.add(Z1);
+                    }else if(Caracter==' '||Caracter=='\t'||Caracter=='\n'){
+                        Estado=200;
+                        ERRC=new Error(G.ERROR.size(),"ESPACIO, TAB o ENTER",Fila,Columna,"SIN ESPACIOS FUERA DE COMILLAS");  
+                    }
+                    else{
+                        Token+=Caracter;
+                    }
+                    break;
+                case 25:
+                    if(Caracter=='\"'){
+                        Token+=Caracter;
+                        ComillasExpReg--;
+                        ESPACIOS=false;
+                        Estado=24;
+                    }else if(Caracter=='}'){
+                        Token+=Caracter;
+                        CorchetesExpReg--;
+                        Estado=24;
+                    }else if(Caracter=='{'){
+                        Estado=200;
+                        ERRC=new Error(G.ERROR.size(),"{",Fila,Columna,"NO ABRIR CORCHETE ANTES DE CERRARLO");  
+                    }
+                    else if(Caracter==';'){
+                        Estado=1;
+                        Token Z1=new Token(G.TOKEN.size(),Token);
+                        System.out.println(Z1.toString());
+                        G.TOKEN.add(Z1);
+                        if(CorchetesExpReg!=0){
+                        Estado=200;
+                        ERRC=new Error(G.ERROR.size(),Token,Fila,Columna,"FALTAN CORCHETES DE CIERRE");  
+                        }else if(ComillasExpReg!=0){
+                        Estado=200;
+                        ERRC=new Error(G.ERROR.size(),Token,Fila,Columna,"FALTAN COMILLAS DE CIERRE");  
+                        }
+                        Token="";
+                        Z1=new Token(G.TOKEN.size(),";");
+                        System.out.println(Z1.toString());
+                        G.TOKEN.add(Z1);
+                    }else if(Caracter==' ' && ESPACIOS==true){
+                        Token+=Caracter;
+                    }
+                    else if((Caracter==' '&&ESPACIOS==false)||Caracter=='\t'||Caracter=='\n'){
+                        Estado=200;
+                        ERRC=new Error(G.ERROR.size(),"ESPACIO, TAB o ENTER",Fila,Columna,"SIN ESPACIOS FUERA DE COMILLAS");  
+                    }
+                    else{
+                        Token+=Caracter;
                     }
                     break;
                     //error automata conjuntos
