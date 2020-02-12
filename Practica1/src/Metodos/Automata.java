@@ -24,6 +24,8 @@ public class Automata {
     int Fila=1;
     int Columna=1;
     public void AutomataConjuntos(String Linea){
+        boolean Terminar=false;
+        boolean ValuarExpReg=false;
         boolean ESPACIOS=false;
         int CorchetesExpReg=0;
         int ComillasExpReg=0;
@@ -35,6 +37,10 @@ public class Automata {
                 Estado=200;
                 ERRC=new Error(G.ERROR.size(),Character.toString(Caracter),Fila,Columna,"NO VALIDO");}
             if(Caracter=='\n'){Fila++;Columna=0;}
+            if(Terminar==true&&Caracter!=' '&&Caracter!='\t'&&Caracter!='\n'){
+                Estado=200;
+                ERRC=new Error(G.ERROR.size(),Character.toString(Caracter),Fila,Columna,"NADA");
+            }
             switch(Estado){
                 case 0:
                     if(Caracter==' '||Caracter=='\n'||Caracter=='\t'){}
@@ -63,6 +69,14 @@ public class Automata {
                     else if(Caracter=='<'){
                         Estado=9;
                         Token="<";
+                    }else if(Caracter=='}'){
+                        Token Z1=new Token(G.TOKEN.size(),"}");
+                        System.out.println(Z1.toString());
+                        G.TOKEN.add(Z1);
+                        Terminar=true;
+                    }else if(Caracter=='%'){
+                        Estado=26;
+                        Token="%";
                     }else{
                         // Nombre Expresiones
                         Estado=20;
@@ -116,7 +130,9 @@ public class Automata {
                         System.out.println(b.toString());
                         G.TOKEN.add(b);
                         Token="";
-                        Estado=1;
+                        if(ValuarExpReg==false){Estado=1;}
+                        else{Estado=30;}
+                        
                     }
                     break;
                 case 5:
@@ -220,7 +236,8 @@ public class Automata {
                     System.out.println(a.toString());
                     G.TOKEN.add(a);
                     Token="";
-                    Estado=1;
+                    if(ValuarExpReg==false){Estado=1;}
+                    else{Estado=30;}
                     break;
                 case 11:
                     if(Caracter=='{'){
@@ -513,7 +530,167 @@ public class Automata {
                         Token+=Caracter;
                     }
                     break;
-                    //error automata conjuntos
+                case 26:
+                    if(Caracter=='%'){
+                        Token+=Caracter;
+                        Token Z1=new Token(G.TOKEN.size(),Token);
+                        System.out.println(Z1.toString());
+                        G.TOKEN.add(Z1);
+                        Token="";
+                        Estado=27;
+                    }else{
+                        Token+=Caracter;
+                        Estado=200;
+                        ERRC=new Error(G.ERROR.size(),Token,Fila,Columna,"%%");  
+                    }
+                    break;
+                case 27:
+                    if(Caracter==' '||Caracter=='\t'){}
+                    else if(Caracter=='\n'){Estado=28;}
+                    else{
+                        Estado=200;
+                        ERRC=new Error(G.ERROR.size(),Character.toString(Caracter),Fila,Columna,"%%");  
+                    }
+                    break;
+                case 28:
+                    if(Caracter=='%'){
+                        Token="%";
+                        Estado=29;
+                    }else if(Caracter==' '||Caracter=='\t'||Caracter=='\n'){}
+                    else{
+                        Estado=200;
+                        ERRC=new Error(G.ERROR.size(),Character.toString(Caracter),Fila,Columna,"%%"); 
+                    }
+                    break;
+                case 29:
+                    if(Caracter=='%'){
+                        Token+=Caracter;
+                        Token Z1=new Token(G.TOKEN.size(),Token);
+                        System.out.println(Z1.toString());
+                        G.TOKEN.add(Z1);
+                        Token="";
+                        Estado=30;
+                        ValuarExpReg=true;
+                    }else{
+                        Token+=Caracter;
+                        Estado=200;
+                        ERRC=new Error(G.ERROR.size(),Token,Fila,Columna,"%%");  
+                    }
+                    break;
+                case 30:
+                    if(Caracter==' '||Caracter=='\t'||Caracter=='\n'){}
+                    else if(Caracter=='/'){
+                        Estado=4;
+                        Token+=Caracter;
+                    }
+                    else if(Caracter=='<'){
+                        Estado=9;
+                        Token="<";
+                    }else if(Caracter=='}'){
+                        Token Z1=new Token(G.TOKEN.size(),"}");
+                        System.out.println(Z1.toString());
+                        G.TOKEN.add(Z1);
+                        Terminar=true;
+                    }else {
+                        Token=Character.toString(Caracter);
+                        Estado=31;
+                    }
+                    break;
+                case 31:
+                    if(Caracter==' '||Caracter=='-'||Caracter=='\t'){
+                        Token Z1=new Token(G.TOKEN.size(),Token);
+                        System.out.println(Z1.toString());
+                        G.TOKEN.add(Z1);
+                        if(Caracter=='-'){
+                        Token="-";
+                        Estado=33;
+                        }else{
+                        Token="";
+                        Estado=32;
+                        }
+                    }else if(Caracter=='\n'){
+                        Estado=200;
+                        ERRC=new Error(G.ERROR.size(),"ENTER",Fila,Columna,"SIN SALTO DE LINEA");
+                    }else{
+                        Token+=Caracter;
+                    }
+                    break;
+                case 32:
+                    if(Caracter==' '||Caracter=='\t'){}
+                    else if(Caracter=='\n'){
+                        Estado=200;
+                        ERRC=new Error(G.ERROR.size(),"ENTER",Fila,Columna,"SIN SALTO DE LINEA");
+                    }else if(Caracter=='-'){
+                        Token="-";
+                        Estado=33;
+                    }
+                    break;
+                case 33:
+                    if(Caracter=='>'){
+                        Token+=Caracter;
+                        Token Z1=new Token(G.TOKEN.size(),Token);
+                        System.out.println(Z1.toString());
+                        G.TOKEN.add(Z1);
+                        Token="";
+                        Estado=34;
+                    }else{
+                        Token+=Caracter;
+                        Estado=200;
+                        ERRC=new Error(G.ERROR.size(),Token,Fila,Columna,"->");
+                    }
+                    break;
+                case 34:
+                    if(Caracter==' '||Caracter=='\t'){}
+                    else if(Caracter=='\"'){
+                        Token=Character.toString(Caracter);
+                        Token Z1=new Token(G.TOKEN.size(),Token);
+                        System.out.println(Z1.toString());
+                        G.TOKEN.add(Z1);
+                        Token="";
+                        Estado=35;
+                    }else{
+                        Token+=Caracter;
+                        Estado=200;
+                        ERRC=new Error(G.ERROR.size(),Token,Fila,Columna,"\"");
+                    }
+                    break;
+                case 35:
+                    for(int q=Col;q<Linea.length();q++){
+                        if(Linea.charAt(q)=='\"'){
+                            Token Z1=new Token(G.TOKEN.size(),Token);
+                            System.out.println(Z1.toString());
+                            G.TOKEN.add(Z1);
+                            Token="";
+                            Z1=new Token(G.TOKEN.size(),"\"");
+                            System.out.println(Z1.toString());
+                            G.TOKEN.add(Z1);
+                            Estado=36;
+                            Col=q;
+                            break;
+                        }else if(Linea.charAt(q)=='\n'){
+                        Estado=200;
+                        ERRC=new Error(G.ERROR.size(),"Enter",Fila,Columna,"SIN SALTO DE LINEA");
+                        }else{
+                        Token+=Linea.charAt(q);
+                        }
+                    }
+                    break;
+                case 36:
+                    if(Caracter==' '||Caracter=='\t'){}
+                    else if(Caracter=='\n'){
+                        Estado=200;
+                        ERRC=new Error(G.ERROR.size(),"Enter",Fila,Columna,"SIN SALTO DE LINEA");
+                    }else if(Caracter==';'){
+                        Token Z1=new Token(G.TOKEN.size(),";");
+                        System.out.println(Z1.toString());
+                        G.TOKEN.add(Z1);
+                        Estado=30;
+                    }else{
+                        Estado=200;
+                        ERRC=new Error(G.ERROR.size(),Character.toString(Caracter),Fila,Columna,";");
+                    }
+                    break;
+                    //error automata
                 case 200:
                     G.ERROR.add(ERRC);
                     System.out.println(ERRC.toString());
