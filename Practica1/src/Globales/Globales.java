@@ -15,7 +15,7 @@ import java.util.Stack;
  */
 public class Globales {
     
-    public static Stack<Token> TOKEN;
-    public static Stack<Error> ERROR;
+    public static Stack<Token> TOKEN=null;
+    public static Stack<Error> ERROR=null;
     public static String Ruta;
 }

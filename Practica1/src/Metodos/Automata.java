@@ -467,6 +467,7 @@ public class Automata {
                         Estado=25;
                     }else if(Caracter==';'){
                         Estado=1;
+                        Token+=".#";
                         Token Z1=new Token(G.TOKEN.size(),Token);
                         System.out.println(Z1.toString());
                         G.TOKEN.add(Z1);
@@ -505,6 +506,7 @@ public class Automata {
                     }
                     else if(Caracter==';'){
                         Estado=1;
+                        Token+=".#";
                         Token Z1=new Token(G.TOKEN.size(),Token);
                         System.out.println(Z1.toString());
                         G.TOKEN.add(Z1);

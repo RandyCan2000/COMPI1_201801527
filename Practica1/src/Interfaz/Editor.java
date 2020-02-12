@@ -98,6 +98,11 @@ public class Editor extends javax.swing.JFrame {
 
         jButton2.setFont(new java.awt.Font("Century Schoolbook", 0, 12)); // NOI18N
         jButton2.setText("Generar Automata");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jTabbedPane1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jTabbedPane1.setFont(new java.awt.Font("Century Schoolbook", 0, 12)); // NOI18N
@@ -279,6 +284,14 @@ public class Editor extends javax.swing.JFrame {
         }
         G.Ruta=null;
     }//GEN-LAST:event_jMenuItem5ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        if(G.TOKEN!=null){
+        M.CrearArbol();
+        }else{
+        JOptionPane.showMessageDialog(null,"NINGUN ANALISIS REALIZADOR","ERROR",JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     
     

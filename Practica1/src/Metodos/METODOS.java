@@ -122,4 +122,20 @@ public class METODOS {
             ex.printStackTrace();
         }
     }
+    
+    public void CrearArbol(){
+        for(int i=0;i<G.TOKEN.size();i++){
+            if(G.TOKEN.get(i).getLexema().equals("CONJ")){
+                for(int index=i;i<G.TOKEN.size();index++){
+                    if(G.TOKEN.get(index).getLexema().equals(";")){i=index;break;}
+                }
+            }
+            else if(G.TOKEN.get(i).getLexema().equals("->")){
+                JOptionPane.showMessageDialog(null,G.TOKEN.get(i+1).getLexema());
+                i++;
+            }
+            else if(G.TOKEN.get(i).getLexema().equals("%%")){break;}
+        }
+    }
+    
 }
