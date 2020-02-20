@@ -24,6 +24,7 @@ public class METODOS {
     String Lexema="";
     NodoArbol Inicio=null;
     int contadorArbol=0;
+    int NumArreglo=0;
     int n=0;
     int Identificador=0;
     int ContadorSig=0;
@@ -246,8 +247,14 @@ public class METODOS {
         Primeros_Ultimos(Inicio);
         G.TABS=new TabSig[1000];
         for(int i=0;i<G.TABS.length;i++){G.TABS[i]=new TabSig();}
+        NumArreglo=0;
+        Siguientes(Inicio);
+        LlenarCaracterEnTabla(Inicio);
         System.out.println(Inicio.getInfo()+"~"+Inicio.getIdentificador()+"~"+Inicio.isAnulable()+"~"+Inicio.getPrimeros()+"~"+Inicio.getUltimos());
         MostrarArbol(Inicio);
+        for(int i=0;i<NumArreglo;i++){
+        System.out.println(G.TABS[i].getCarcter()+"~"+G.TABS[i].getNumero()+"~"+G.TABS[i].getSiguiente());
+        }
     }
     
     public void CalculoAnulables_E_Identificador(NodoArbol Nodo){
@@ -302,14 +309,48 @@ public class METODOS {
     
     void Siguientes(NodoArbol Nodo){
         if(Nodo.getNodoIzquierda()!=null){
-            Primeros_Ultimos(Nodo.getNodoIzquierda());
+            Siguientes(Nodo.getNodoIzquierda());
         }
         if(Nodo.getNodoDerecha()!=null){
-            Primeros_Ultimos(Nodo.getNodoDerecha());
+            Siguientes(Nodo.getNodoDerecha());
         }
         if(Nodo.getInfo().equals(".") && Nodo.getNodoIzquierda()!=null && Nodo.getNodoDerecha()!=null){
             String[] NUM=Nodo.getNodoIzquierda().getUltimos().split(",");
-            
+            for(String num:NUM){
+                G.TABS[NumArreglo].setNumero(Integer.parseInt(num));
+                G.TABS[NumArreglo].setSiguiente(Nodo.getNodoDerecha().getPrimeros());
+                NumArreglo++;
+            }
+        }else if(Nodo.getInfo().equals("*") && Nodo.getNodoIzquierda()!=null){
+            String[] NUM=Nodo.getNodoIzquierda().getUltimos().split(",");
+            for(String num:NUM){
+                G.TABS[NumArreglo].setNumero(Integer.parseInt(num));
+                G.TABS[NumArreglo].setSiguiente(Nodo.getNodoIzquierda().getPrimeros());
+                NumArreglo++;
+            }
+        }else if(Nodo.getInfo().equals("+") && Nodo.getNodoIzquierda()!=null){
+            String[] NUM=Nodo.getNodoIzquierda().getUltimos().split(",");
+            for(String num:NUM){
+                G.TABS[NumArreglo].setNumero(Integer.parseInt(num));
+                G.TABS[NumArreglo].setSiguiente(Nodo.getNodoIzquierda().getPrimeros());
+                NumArreglo++;
+            }
+        }
+    }
+    
+    void LlenarCaracterEnTabla(NodoArbol Nodo){
+        if(Nodo.getNodoIzquierda()!=null){
+            LlenarCaracterEnTabla(Nodo.getNodoIzquierda());
+        }
+        if(Nodo.getNodoDerecha()!=null){
+            LlenarCaracterEnTabla(Nodo.getNodoDerecha());
+        }
+        if(Nodo.getIdentificador()!=0){
+            for(int i=0;i<NumArreglo;i++){
+                if(Nodo.getIdentificador()==G.TABS[i].getNumero()){
+                    G.TABS[i].setCarcter(Nodo.getInfo());
+                }
+            }
         }
     }
     
