@@ -286,8 +286,10 @@ public class Editor extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem5ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        if(G.TOKEN!=null){
+        if(G.TOKEN!=null&&G.ERROR.empty()){
         M.CrearArbol();
+        CargarJTree();
+        jTree1.repaint();
         }else{
         JOptionPane.showMessageDialog(null,"NINGUN ANALISIS REALIZADOR","ERROR",JOptionPane.ERROR_MESSAGE);
         }

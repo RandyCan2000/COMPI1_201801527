@@ -22,6 +22,8 @@ public class METODOS {
     Globales G=new Globales();
     String Lexema="";
     NodoArbol Inicio=null;
+    int contadorArbol=0;
+    int n=0;
     public String AbrirArchivos(){
         String Texto="";
         JFileChooser explorador = new JFileChooser();
@@ -128,6 +130,8 @@ public class METODOS {
     }
     
     public void CrearArbol(){
+        contadorArbol=0;
+        Inicio=null;
         for(int i=0;i<G.TOKEN.size();i++){
             if(G.TOKEN.get(i).getLexema().equals("CONJ")){
                 for(int index=i;i<G.TOKEN.size();index++){
@@ -135,7 +139,6 @@ public class METODOS {
                 }
             }
             else if(G.TOKEN.get(i).getLexema().equals("->")){
-                JOptionPane.showMessageDialog(null,G.TOKEN.get(i+1).getLexema());
                 Lexema=G.TOKEN.get(i+1).getLexema();
                 SepararExpReg(G.TOKEN.get(i+1).getLexema());
                 i++;
@@ -166,12 +169,11 @@ public class METODOS {
             EXPSeparada.push(EXPSeparada2.pop());
         }
         System.out.println("EXP SEPARADA");
+        Inicio=null;
         Arbol();
-        arbol=new String[1000];
-        for(int i=0;i<arbol.length;i++){
-            arbol[i]=null;
-        }
-        RecorrerArbol();
+        n=0;
+        ArbG="";
+        CrearImagenArbol();
     }
     
     public void Arbol(){
@@ -235,19 +237,88 @@ public class METODOS {
     String[] arbol;
     
     public void RecorrerArbol(){
-        System.out.println(Inicio.getInfo());
+        arbol[n]=Inicio.getInfo();n++;
         LecturaArbol(Inicio);
     }
     
     public void LecturaArbol(NodoArbol  Nodo){
         if(Nodo.getNodoIzquierda()!=null){
-            System.out.println(Nodo.getNodoIzquierda().getInfo());
+            arbol[n]=Nodo.getNodoIzquierda().getInfo();n++;
             LecturaArbol(Nodo.getNodoIzquierda());
         }
         if(Nodo.getNodoDerecha()!=null){
-            System.out.println(Nodo.getNodoDerecha().getInfo());
+            arbol[n]=Nodo.getNodoDerecha().getInfo();n++;
             LecturaArbol(Nodo.getNodoDerecha());
         }
     }
+    String ArbG="";
+    void CrearImagenArbol(){
+        try{
+            PrintWriter pw = null;
+            FileWriter Fw=new FileWriter ("C:\\Users\\Usuario\\Desktop\\Arbol"+contadorArbol+".dot");
+            pw = new PrintWriter(Fw);
+            pw.println("digraph G{");
+            pw.println("N0 [label=\""+Inicio.getInfo()+"\"];");
+            String NP="N"+n;
+            n++;
+            RecArbol2(Inicio,NP);
+            pw.println(ArbG);
+            pw.println("}");
+            pw.close();
+            
+            try {
+                String dotPath = "C:\\Program Files (x86)\\Graphviz2.38\\bin\\dot.exe";
+                String fileInputPath = "C:\\Users\\Usuario\\Desktop\\Arbol"+contadorArbol+".dot";
+                String fileOutputPath = "C:\\Users\\Usuario\\Desktop\\RC\\Practica1\\src\\Archivos\\Arboles\\Arbol"+contadorArbol+".png";
+                String tParam = "-Tpng";
+                String tOParam = "-o";
+                String[] cmd = new String[5];
+                cmd[0] = dotPath;
+                cmd[1] = tParam;
+                cmd[2] = fileInputPath;
+                cmd[3] = tOParam;
+                cmd[4] = fileOutputPath;   
+                Runtime rt = Runtime.getRuntime();
+                rt.exec( cmd ); 
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    } finally {
+    }
+            contadorArbol++;
+        }catch (IOException ex) {
+            Logger.getLogger(METODOS.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    void RecArbol2(NodoArbol Nodo,String NomPadre){
+        if(Nodo.getNodoIzquierda()!=null){
+            String pal="";
+            if(Nodo.getNodoIzquierda().getInfo().charAt(0)=='\"'){
+                for(int i=1;i<Nodo.getNodoIzquierda().getInfo().length()-1;i++){
+                    pal+=Nodo.getNodoIzquierda().getInfo().charAt(i);
+                }
+            }else{pal=Nodo.getNodoIzquierda().getInfo();}
+            ArbG=ArbG+"N"+n+" [label=\""+pal+"\"];\n";
+            ArbG=ArbG+NomPadre+"->"+"N"+n+";\n";
+            String NP="N"+n;
+            n++;
+            RecArbol2(Nodo.getNodoIzquierda(),NP);
+        }
+        if(Nodo.getNodoDerecha()!=null){
+            String pal="";
+            if(Nodo.getNodoDerecha().getInfo().charAt(0)=='\"'){
+                for(int i=1;i<Nodo.getNodoDerecha().getInfo().length()-1;i++){
+                    pal+=Nodo.getNodoDerecha().getInfo().charAt(i);
+                }
+            }else{pal=Nodo.getNodoDerecha().getInfo();}
+            ArbG=ArbG+"N"+n+" [label=\""+pal+"\"];\n";
+            ArbG=ArbG+NomPadre+"->"+"N"+n+";\n";
+            String NP="N"+n;
+            n++;
+            RecArbol2(Nodo.getNodoDerecha(),NP);
+        }
+    }
+    
+    
+    
     
 }
