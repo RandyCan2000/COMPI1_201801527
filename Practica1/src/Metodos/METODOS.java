@@ -11,6 +11,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import Globales.*;
 import TDA.NodoArbol;
+import TDA.TabSig;
 import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,6 +26,7 @@ public class METODOS {
     int contadorArbol=0;
     int n=0;
     int Identificador=0;
+    int ContadorSig=0;
     public String AbrirArchivos(){
         String Texto="";
         JFileChooser explorador = new JFileChooser();
@@ -241,7 +243,10 @@ public class METODOS {
     
     public void RecorrerArbol(){
         CalculoAnulables_E_Identificador(Inicio);
-        System.out.println(Inicio.getInfo()+"~"+Inicio.getIdentificador()+"~"+Inicio.isAnulable());
+        Primeros_Ultimos(Inicio);
+        G.TABS=new TabSig[1000];
+        for(int i=0;i<G.TABS.length;i++){G.TABS[i]=new TabSig();}
+        System.out.println(Inicio.getInfo()+"~"+Inicio.getIdentificador()+"~"+Inicio.isAnulable()+"~"+Inicio.getPrimeros()+"~"+Inicio.getUltimos());
         MostrarArbol(Inicio);
     }
     
@@ -264,6 +269,47 @@ public class METODOS {
                         Nodo.setAnulable(true);
             }else if(Nodo.getInfo().equals("+") && Nodo.getNodoIzquierda()!=null&&Nodo.getNodoIzquierda().isAnulable()==true){
                 Nodo.setAnulable(true);
+        }
+    }
+    
+    public void Primeros_Ultimos(NodoArbol Nodo){
+        if(Nodo.getNodoIzquierda()!=null){
+            Primeros_Ultimos(Nodo.getNodoIzquierda());
+        }
+        if(Nodo.getNodoDerecha()!=null){
+            Primeros_Ultimos(Nodo.getNodoDerecha());
+        }
+        if(Nodo.getInfo().equals("|")&&Nodo.getNodoIzquierda()!=null && Nodo.getNodoDerecha()!=null){
+            Nodo.setPrimeros(Nodo.getNodoIzquierda().getPrimeros()+","+Nodo.getNodoDerecha().getPrimeros());
+            Nodo.setUltimos(Nodo.getNodoIzquierda().getUltimos()+","+Nodo.getNodoDerecha().getUltimos());
+        }else if(Nodo.getInfo().equals(".")&&Nodo.getNodoIzquierda()!=null && Nodo.getNodoDerecha()!=null){
+            if(Nodo.getNodoIzquierda().isAnulable()==true){
+                Nodo.setPrimeros(Nodo.getNodoIzquierda().getPrimeros()+","+Nodo.getNodoDerecha().getPrimeros());
+            }else{Nodo.setPrimeros(Nodo.getNodoIzquierda().getPrimeros());}
+            if(Nodo.getNodoDerecha().isAnulable()==true){
+                Nodo.setUltimos(Nodo.getNodoIzquierda().getUltimos()+","+Nodo.getNodoDerecha().getUltimos());
+            }else{Nodo.setUltimos(Nodo.getNodoDerecha().getUltimos());}
+        }else if(Nodo.getInfo().equals("*")||Nodo.getInfo().equals("+")||Nodo.getInfo().equals("?")){
+            if(Nodo.getNodoIzquierda()!=null){
+                Nodo.setPrimeros(Nodo.getNodoIzquierda().getPrimeros());
+                Nodo.setUltimos(Nodo.getNodoIzquierda().getUltimos());
+            }
+        }else{
+            Nodo.setPrimeros(Integer.toString(Nodo.getIdentificador()));
+            Nodo.setUltimos(Integer.toString(Nodo.getIdentificador()));
+        }
+    }
+    
+    void Siguientes(NodoArbol Nodo){
+        if(Nodo.getNodoIzquierda()!=null){
+            Primeros_Ultimos(Nodo.getNodoIzquierda());
+        }
+        if(Nodo.getNodoDerecha()!=null){
+            Primeros_Ultimos(Nodo.getNodoDerecha());
+        }
+        if(Nodo.getInfo().equals(".") && Nodo.getNodoIzquierda()!=null && Nodo.getNodoDerecha()!=null){
+            String[] NUM=Nodo.getNodoIzquierda().getUltimos().split(",");
+            
         }
     }
     
@@ -338,11 +384,11 @@ public class METODOS {
     
     void MostrarArbol(NodoArbol Nodo){
         if(Nodo.getNodoIzquierda()!=null){
-            System.out.println(Nodo.getNodoIzquierda().getInfo()+"~"+Nodo.getNodoIzquierda().getIdentificador()+"~"+Nodo.getNodoIzquierda().isAnulable());
+            System.out.println(Nodo.getNodoIzquierda().getInfo()+"~"+Nodo.getNodoIzquierda().getIdentificador()+"~"+Nodo.getNodoIzquierda().isAnulable()+"~"+Nodo.getNodoIzquierda().getPrimeros()+"~"+Nodo.getNodoIzquierda().getUltimos());
             MostrarArbol(Nodo.getNodoIzquierda());
         }
         if(Nodo.getNodoDerecha()!=null){
-            System.out.println(Nodo.getNodoDerecha().getInfo()+"~"+Nodo.getNodoDerecha().getIdentificador()+"~"+Nodo.getNodoDerecha().isAnulable());
+            System.out.println(Nodo.getNodoDerecha().getInfo()+"~"+Nodo.getNodoDerecha().getIdentificador()+"~"+Nodo.getNodoDerecha().isAnulable()+"~"+Nodo.getNodoDerecha().getPrimeros()+"~"+Nodo.getNodoDerecha().getUltimos());
             MostrarArbol(Nodo.getNodoDerecha());
         }
     }

@@ -17,5 +17,6 @@ public class Globales {
     
     public static Stack<Token> TOKEN=null;
     public static Stack<Error> ERROR=null;
+    public static TabSig[] TABS=null; 
     public static String Ruta;
 }

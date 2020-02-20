@@ -21,8 +21,8 @@ public class NodoArbol {
         this.Info = null;
         this.Identificador = 0;
         this.Anulable = false;
-        this.Primeros = null;
-        this.Ultimos = null;
+        this.Primeros = "";
+        this.Ultimos = "";
         this.NodoDerecha = null;
         this.NodoIzquierda = null;
     }
