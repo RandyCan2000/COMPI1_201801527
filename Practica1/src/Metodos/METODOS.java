@@ -10,6 +10,8 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import Globales.*;
+import TDA.NodoArbol;
+import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 /**
@@ -18,10 +20,12 @@ import java.util.logging.Logger;
  */
 public class METODOS {
     Globales G=new Globales();
+    String Lexema="";
+    NodoArbol Inicio=null;
     public String AbrirArchivos(){
         String Texto="";
         JFileChooser explorador = new JFileChooser();
-        FileNameExtensionFilter filtro = new FileNameExtensionFilter("ARCHIVOS TXT", "TXT");
+        FileNameExtensionFilter filtro = new FileNameExtensionFilter("ARCHIVOS EXP. REG.", "er");
         explorador.setFileFilter(filtro);
         //Le cambiamos el titulo
         explorador.setDialogTitle("Abrir documento...");
@@ -132,10 +136,109 @@ public class METODOS {
             }
             else if(G.TOKEN.get(i).getLexema().equals("->")){
                 JOptionPane.showMessageDialog(null,G.TOKEN.get(i+1).getLexema());
+                Lexema=G.TOKEN.get(i+1).getLexema();
+                SepararExpReg(G.TOKEN.get(i+1).getLexema());
                 i++;
             }
             else if(G.TOKEN.get(i).getLexema().equals("%%")){break;}
         }
+    }
+    
+    Stack Pos=new Stack();
+    Stack<String> EXPSeparada=null;
+    public void SepararExpReg(String EXP){
+        Stack<String> EXPSeparada2=new Stack<String>();
+        EXPSeparada=new Stack<String>();
+        String Pal="";
+        for(int i=0;i<EXP.length();i++){
+            if(EXP.charAt(i)=='.'||EXP.charAt(i)=='|'||EXP.charAt(i)=='*'||EXP.charAt(i)=='+'||EXP.charAt(i)=='?')
+            {EXPSeparada2.add(Character.toString(EXP.charAt(i)));}
+            else if(EXP.charAt(i)=='"'){
+                Pal="\"";
+                for(int b=i+1;b<EXP.length();b++){if(EXP.charAt(b)=='"'){Pal+=EXP.charAt(b);EXPSeparada2.add(Pal);i=b;break;}else{Pal+=EXP.charAt(b);}}
+                Pal="";
+            }else if(EXP.charAt(i)=='{'){
+                for(int b=i;b<EXP.length();b++){if(EXP.charAt(b)=='}'){Pal+=EXP.charAt(b);EXPSeparada2.push(Pal);i=b;break;}else{Pal+=EXP.charAt(b);}}
+                Pal="";
+            }
+        }
+        while(!EXPSeparada2.empty()){
+            EXPSeparada.push(EXPSeparada2.pop());
+        }
+        System.out.println("EXP SEPARADA");
+        Arbol();
+        RecorrerArbol();
+    }
+    
+    public void Arbol(){
+        System.out.println("INICIO DEL METODO");
+        Inicio=null;
+        Lexema=EXPSeparada.pop();
+        NodoArbol Nodo=new NodoArbol();
+        Nodo.setInfo(Lexema);
+        Inicio=Nodo;
+        if(Nodo.getInfo().equals(".")){
+            AgregarIzquierda(Nodo);AgregarDerecha(Nodo);
+        }else if(Nodo.getInfo().equals("|")){
+            AgregarIzquierda(Nodo);AgregarDerecha(Nodo);
+        }else if(Nodo.getInfo().equals("+")){
+            AgregarIzquierda(Nodo);
+        }else if(Nodo.getInfo().equals("*")){
+            AgregarIzquierda(Nodo);
+        }else if(Nodo.getInfo().equals("?")){
+            AgregarIzquierda(Nodo);
+        }
+        System.out.println("FIN DEL METODO");
+    }
+    
+    public void AgregarDerecha(NodoArbol Nodo){
+        Lexema=EXPSeparada.pop();
+        NodoArbol NuevoNodo=new NodoArbol();
+        NuevoNodo.setInfo(Lexema);
+        Nodo.setNodoDerecha(NuevoNodo);
+        if(NuevoNodo.getInfo().equals(".")){
+            AgregarIzquierda(Nodo);AgregarDerecha(Nodo);
+        }else if(NuevoNodo.getInfo().equals("|")){
+            AgregarIzquierda(Nodo);AgregarDerecha(Nodo);
+        }else if(NuevoNodo.getInfo().equals("+")){
+            AgregarIzquierda(NuevoNodo);
+        }else if(NuevoNodo.getInfo().equals("*")){
+            AgregarIzquierda(NuevoNodo);
+        }else if(NuevoNodo.getInfo().equals("?")){
+            AgregarIzquierda(NuevoNodo);
+        }
+        System.out.println("agregoDerecha");
+    }
+    public void AgregarIzquierda(NodoArbol Nodo){
+        Lexema=EXPSeparada.pop();
+        NodoArbol NuevoNodo=new NodoArbol();
+        NuevoNodo.setInfo(Lexema);
+        Nodo.setNodoIzquierda(NuevoNodo);
+        if(NuevoNodo.getInfo().equals(".")){
+            AgregarIzquierda(Nodo);AgregarDerecha(Nodo);
+        }else if(NuevoNodo.getInfo().equals("|")){
+            AgregarIzquierda(Nodo);AgregarDerecha(Nodo);
+        }else if(NuevoNodo.getInfo().equals("+")){
+            AgregarIzquierda(NuevoNodo);
+        }else if(NuevoNodo.getInfo().equals("*")){
+            AgregarIzquierda(NuevoNodo);
+        }else if(NuevoNodo.getInfo().equals("?")){
+            AgregarIzquierda(NuevoNodo);
+        }
+        System.out.println("agregoIzquierda");
+    }
+    String arbol="";
+    public void RecorrerArbol(){
+        if(Inicio!=null){
+            System.out.println(Inicio.getInfo());
+        }
+    }
+    
+    public void LecturaNodoDerecha(NodoArbol  Nodo){
+        
+    }
+    public void LecturaNodoIzquierda(NodoArbol Nodo){
+        
     }
     
 }
