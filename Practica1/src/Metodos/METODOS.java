@@ -24,6 +24,7 @@ public class METODOS {
     NodoArbol Inicio=null;
     int contadorArbol=0;
     int n=0;
+    int Identificador=0;
     public String AbrirArchivos(){
         String Texto="";
         JFileChooser explorador = new JFileChooser();
@@ -171,6 +172,8 @@ public class METODOS {
         System.out.println("EXP SEPARADA");
         Inicio=null;
         Arbol();
+        Identificador=0;
+        RecorrerArbol();
         n=0;
         ArbG="";
         CrearImagenArbol();
@@ -237,20 +240,34 @@ public class METODOS {
     String[] arbol;
     
     public void RecorrerArbol(){
-        arbol[n]=Inicio.getInfo();n++;
-        LecturaArbol(Inicio);
+        CalculoAnulables_E_Identificador(Inicio);
+        System.out.println(Inicio.getInfo()+"~"+Inicio.getIdentificador()+"~"+Inicio.isAnulable());
+        MostrarArbol(Inicio);
     }
     
-    public void LecturaArbol(NodoArbol  Nodo){
+    public void CalculoAnulables_E_Identificador(NodoArbol Nodo){
+        if(Nodo.getInfo().equals("*")||Nodo.getInfo().equals("?")){Nodo.setAnulable(true);}
+        else if(Nodo.getNodoDerecha()==null && Nodo.getNodoIzquierda()==null){
+            Identificador++;
+            Nodo.setIdentificador(Identificador);
+        }
         if(Nodo.getNodoIzquierda()!=null){
-            arbol[n]=Nodo.getNodoIzquierda().getInfo();n++;
-            LecturaArbol(Nodo.getNodoIzquierda());
+            CalculoAnulables_E_Identificador(Nodo.getNodoIzquierda());
         }
         if(Nodo.getNodoDerecha()!=null){
-            arbol[n]=Nodo.getNodoDerecha().getInfo();n++;
-            LecturaArbol(Nodo.getNodoDerecha());
+            CalculoAnulables_E_Identificador(Nodo.getNodoDerecha());
+        }
+        if(Nodo.getInfo().equals("|")&&Nodo.getNodoDerecha()!=null && Nodo.getNodoIzquierda()!=null){
+                if(Nodo.getNodoIzquierda().isAnulable()==true || Nodo.getNodoDerecha().isAnulable()==true){
+                    Nodo.setAnulable(true);}
+            }else if(Nodo.getInfo().equals(".") && Nodo.getNodoDerecha()!=null && Nodo.getNodoIzquierda()!=null&&Nodo.getNodoIzquierda().isAnulable()==true && Nodo.getNodoDerecha().isAnulable()==true){
+                        Nodo.setAnulable(true);
+            }else if(Nodo.getInfo().equals("+") && Nodo.getNodoIzquierda()!=null&&Nodo.getNodoIzquierda().isAnulable()==true){
+                Nodo.setAnulable(true);
         }
     }
+    
+    
     String ArbG="";
     void CrearImagenArbol(){
         try{
@@ -319,6 +336,15 @@ public class METODOS {
     }
     
     
-    
+    void MostrarArbol(NodoArbol Nodo){
+        if(Nodo.getNodoIzquierda()!=null){
+            System.out.println(Nodo.getNodoIzquierda().getInfo()+"~"+Nodo.getNodoIzquierda().getIdentificador()+"~"+Nodo.getNodoIzquierda().isAnulable());
+            MostrarArbol(Nodo.getNodoIzquierda());
+        }
+        if(Nodo.getNodoDerecha()!=null){
+            System.out.println(Nodo.getNodoDerecha().getInfo()+"~"+Nodo.getNodoDerecha().getIdentificador()+"~"+Nodo.getNodoDerecha().isAnulable());
+            MostrarArbol(Nodo.getNodoDerecha());
+        }
+    }
     
 }
