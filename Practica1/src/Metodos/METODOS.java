@@ -167,6 +167,10 @@ public class METODOS {
         }
         System.out.println("EXP SEPARADA");
         Arbol();
+        arbol=new String[1000];
+        for(int i=0;i<arbol.length;i++){
+            arbol[i]=null;
+        }
         RecorrerArbol();
     }
     
@@ -176,6 +180,7 @@ public class METODOS {
         Lexema=EXPSeparada.pop();
         NodoArbol Nodo=new NodoArbol();
         Nodo.setInfo(Lexema);
+        System.out.println(Nodo.getInfo());
         Inicio=Nodo;
         if(Nodo.getInfo().equals(".")){
             AgregarIzquierda(Nodo);AgregarDerecha(Nodo);
@@ -197,9 +202,9 @@ public class METODOS {
         NuevoNodo.setInfo(Lexema);
         Nodo.setNodoDerecha(NuevoNodo);
         if(NuevoNodo.getInfo().equals(".")){
-            AgregarIzquierda(Nodo);AgregarDerecha(Nodo);
+            AgregarIzquierda(NuevoNodo);AgregarDerecha(NuevoNodo);
         }else if(NuevoNodo.getInfo().equals("|")){
-            AgregarIzquierda(Nodo);AgregarDerecha(Nodo);
+            AgregarIzquierda(NuevoNodo);AgregarDerecha(NuevoNodo);
         }else if(NuevoNodo.getInfo().equals("+")){
             AgregarIzquierda(NuevoNodo);
         }else if(NuevoNodo.getInfo().equals("*")){
@@ -207,7 +212,7 @@ public class METODOS {
         }else if(NuevoNodo.getInfo().equals("?")){
             AgregarIzquierda(NuevoNodo);
         }
-        System.out.println("agregoDerecha");
+        System.out.println("agregoDerecha"+NuevoNodo.getInfo());
     }
     public void AgregarIzquierda(NodoArbol Nodo){
         Lexema=EXPSeparada.pop();
@@ -215,9 +220,9 @@ public class METODOS {
         NuevoNodo.setInfo(Lexema);
         Nodo.setNodoIzquierda(NuevoNodo);
         if(NuevoNodo.getInfo().equals(".")){
-            AgregarIzquierda(Nodo);AgregarDerecha(Nodo);
+            AgregarIzquierda(NuevoNodo);AgregarDerecha(NuevoNodo);
         }else if(NuevoNodo.getInfo().equals("|")){
-            AgregarIzquierda(Nodo);AgregarDerecha(Nodo);
+            AgregarIzquierda(NuevoNodo);AgregarDerecha(NuevoNodo);
         }else if(NuevoNodo.getInfo().equals("+")){
             AgregarIzquierda(NuevoNodo);
         }else if(NuevoNodo.getInfo().equals("*")){
@@ -225,20 +230,24 @@ public class METODOS {
         }else if(NuevoNodo.getInfo().equals("?")){
             AgregarIzquierda(NuevoNodo);
         }
-        System.out.println("agregoIzquierda");
+        System.out.println("agregoIzquierda"+NuevoNodo.getInfo());
     }
-    String arbol="";
+    String[] arbol;
+    
     public void RecorrerArbol(){
-        if(Inicio!=null){
-            System.out.println(Inicio.getInfo());
-        }
+        System.out.println(Inicio.getInfo());
+        LecturaArbol(Inicio);
     }
     
-    public void LecturaNodoDerecha(NodoArbol  Nodo){
-        
-    }
-    public void LecturaNodoIzquierda(NodoArbol Nodo){
-        
+    public void LecturaArbol(NodoArbol  Nodo){
+        if(Nodo.getNodoIzquierda()!=null){
+            System.out.println(Nodo.getNodoIzquierda().getInfo());
+            LecturaArbol(Nodo.getNodoIzquierda());
+        }
+        if(Nodo.getNodoDerecha()!=null){
+            System.out.println(Nodo.getNodoDerecha().getInfo());
+            LecturaArbol(Nodo.getNodoDerecha());
+        }
     }
     
 }
