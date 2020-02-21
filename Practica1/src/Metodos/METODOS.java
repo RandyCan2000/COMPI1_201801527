@@ -578,13 +578,28 @@ public class METODOS {
         pw.println("digraph G{");
         pw.println("node [shape=plaintext]");
         pw.println("a [label=<<table border=\"0\" cellborder=\"1\" cellspacing=\"0\">\n");
-        //Tabla de transiciones
-        //se deben de omitir las desigualdades para que funcione
-        //falta correccion
+        //Enabezado
         pw.println("<tr>");
         pw.println("<td><b>ESTADOS</b></td>");
+        boolean pr=false;
         for(TabSig n:G.TABS){
-            pw.println("<td><b>"+n.getCarcter()+"</b></td>");
+            for(int q=0;q<n.getCarcter().length();q++){
+                    if(n.getCarcter().charAt(q)=='>'||n.getCarcter().charAt(q)=='<'){pr=true;break;}
+            }
+                if(pr==false){pw.println("<td><b>"+n.getCarcter()+"</b></td>");}
+                else{pw.println("<td><b>"+"desigualdad"+"</b></td>");}
+                pr=false;
+        }
+        pw.println("</tr>");
+        pw.println("<tr>");
+        if(G.TABS.length>=1){
+            pw.println("<td>"+G.TABS[0].getSiguiente()+"</td>");}
+        //Demas ESTADOS de Transicion
+        String[] Num=G.TABS[0].getSiguiente().split(",");
+        for(String n:Num){
+            if(n!=""||n!=null){
+                System.err.println(n);
+            }
         }
         pw.println("</tr>");
         pw.println("</table>>];\n" +
