@@ -28,6 +28,7 @@ public class METODOS {
     int n=0;
     int Identificador=0;
     int ContadorSig=0;
+    String TabInfoNodo="";
     public String AbrirArchivos(){
         String Texto="";
         JFileChooser explorador = new JFileChooser();
@@ -176,10 +177,13 @@ public class METODOS {
         Inicio=null;
         Arbol();
         Identificador=0;
+        TabInfoNodo="";
         RecorrerArbol();
         n=0;
         ArbG="";
         CrearImagenArbol();
+        TablaInfoNodo();
+        contadorArbol++;
     }
     
     public void Arbol(){
@@ -251,11 +255,16 @@ public class METODOS {
         Siguientes(Inicio);
         LlenarCaracterEnTabla(Inicio);
         System.out.println(Inicio.getInfo()+"~"+Inicio.getIdentificador()+"~"+Inicio.isAnulable()+"~"+Inicio.getPrimeros()+"~"+Inicio.getUltimos());
+        TabInfoNodo=TabInfoNodo+Inicio.getInfo()+"~"+Inicio.getIdentificador()+"~"+Inicio.isAnulable()+"~"+Inicio.getPrimeros()+"~"+Inicio.getUltimos()+"\n";
         MostrarArbol(Inicio);
         for(int i=0;i<NumArreglo;i++){
         System.out.println(G.TABS[i].getCarcter()+"~"+G.TABS[i].getNumero()+"~"+G.TABS[i].getSiguiente());
         }
     }
+    
+    
+    
+    
     
     public void CalculoAnulables_E_Identificador(NodoArbol Nodo){
         if(Nodo.getInfo().equals("*")||Nodo.getInfo().equals("?")){Nodo.setAnulable(true);}
@@ -355,6 +364,56 @@ public class METODOS {
     }
     
     
+    public void TablaInfoNodo(){
+        try{
+        PrintWriter pw = null;
+        FileWriter Fw=new FileWriter ("C:\\Users\\Usuario\\Desktop\\TabArbol"+contadorArbol+".dot");
+        pw = new PrintWriter(Fw);
+        pw.println("digraph G{");
+        pw.println("node [shape=plaintext]");
+        pw.println("a [label=<<table border=\"0\" cellborder=\"1\" cellspacing=\"0\">\n" +
+                    "  <tr>\n" +
+                    "    <td><b>Nodo</b></td>\n" +
+                    "    <td><b>Identificador</b></td>\n" +
+                    "    <td><b>Anulable</b></td>\n" +
+                    "    <td><b>Primeros</b></td>\n" +
+                    "    <td><b>Ultimos</b></td>\n" +
+                    "  </tr>");
+        String[] Fila=TabInfoNodo.split("\n");
+        boolean pr=false;
+        for(String f:Fila){
+            pw.println("<tr>");
+            String[] Info=f.split("~");
+            for(String i:Info){
+                for(int q=0;q<i.length();q++){
+                    if(i.charAt(q)=='>'||i.charAt(q)=='<'){pr=true;break;}
+                }
+                if(pr==false){pw.println("<td>"+i+"</td>");}
+                else{pw.println("<td>"+"desigualdad"+"</td>");}
+                pr=false;
+                
+            }
+            pw.println("</tr>");
+        }
+        
+        
+        pw.println("</table>>];\n" +
+                    "}");
+        pw.close();
+                String[] cmd = new String[5];
+                cmd[0] = "C:\\Program Files (x86)\\Graphviz2.38\\bin\\dot.exe";
+                cmd[1] = "-Tpng";
+                cmd[2] = "C:\\Users\\Usuario\\Desktop\\TabArbol"+contadorArbol+".dot";
+                cmd[3] = "-o";
+                cmd[4] = "C:\\Users\\Usuario\\Desktop\\RC\\Practica1\\src\\Archivos\\Informacion\\TabArbol"+contadorArbol+".png";   
+                Runtime rt = Runtime.getRuntime();
+                rt.exec( cmd ); 
+        
+        }catch (IOException ex) {
+            Logger.getLogger(METODOS.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     String ArbG="";
     void CrearImagenArbol(){
         try{
@@ -388,7 +447,6 @@ public class METODOS {
       ex.printStackTrace();
     } finally {
     }
-            contadorArbol++;
         }catch (IOException ex) {
             Logger.getLogger(METODOS.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -425,13 +483,33 @@ public class METODOS {
     
     void MostrarArbol(NodoArbol Nodo){
         if(Nodo.getNodoIzquierda()!=null){
+            TabInfoNodo=TabInfoNodo+Nodo.getNodoIzquierda().getInfo()+"~"+Nodo.getNodoIzquierda().getIdentificador()+"~"+Nodo.getNodoIzquierda().isAnulable()+"~"+Nodo.getNodoIzquierda().getPrimeros()+"~"+Nodo.getNodoIzquierda().getUltimos()+"\n";
             System.out.println(Nodo.getNodoIzquierda().getInfo()+"~"+Nodo.getNodoIzquierda().getIdentificador()+"~"+Nodo.getNodoIzquierda().isAnulable()+"~"+Nodo.getNodoIzquierda().getPrimeros()+"~"+Nodo.getNodoIzquierda().getUltimos());
             MostrarArbol(Nodo.getNodoIzquierda());
         }
         if(Nodo.getNodoDerecha()!=null){
+            TabInfoNodo=TabInfoNodo+Nodo.getNodoDerecha().getInfo()+"~"+Nodo.getNodoDerecha().getIdentificador()+"~"+Nodo.getNodoDerecha().isAnulable()+"~"+Nodo.getNodoDerecha().getPrimeros()+"~"+Nodo.getNodoDerecha().getUltimos()+"\n";
             System.out.println(Nodo.getNodoDerecha().getInfo()+"~"+Nodo.getNodoDerecha().getIdentificador()+"~"+Nodo.getNodoDerecha().isAnulable()+"~"+Nodo.getNodoDerecha().getPrimeros()+"~"+Nodo.getNodoDerecha().getUltimos());
             MostrarArbol(Nodo.getNodoDerecha());
         }
+    }
+    
+    void OrdenarTablaSiguientes(){
+        TabSig[] Aux=G.TABS;int cont=0,cont2=0;
+        TabSig[] Aux2=new TabSig[cont];
+        for(int i=0;i<Aux.length;i++){if(Aux[i].getNumero()==0){break;}
+        else{cont++;}}
+        for(int i=0;i<Aux.length;i++){if(Aux[i].getNumero()==0){break;}
+        else{Aux2[cont]=new TabSig(); 
+        Aux2[cont].setCarcter(Aux[i].gz);}
+        
+        G.TABS=new TabSig[cont];
+        for(int i=0;i<Aux.length;i++){if(Aux[i].getNumero()==0){break;}
+        else{
+            for(int b=0;b<Aux2.length;b++){
+                if(){}
+            }
+        }}
     }
     
 }
