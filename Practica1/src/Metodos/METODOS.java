@@ -12,6 +12,7 @@ import javax.swing.table.DefaultTableModel;
 import Globales.*;
 import TDA.NodoArbol;
 import TDA.TabSig;
+import java.util.Arrays;
 import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -183,6 +184,7 @@ public class METODOS {
         ArbG="";
         CrearImagenArbol();
         TablaInfoNodo();
+        OrdenarTablaSiguientes();
         contadorArbol++;
     }
     
@@ -495,21 +497,111 @@ public class METODOS {
     }
     
     void OrdenarTablaSiguientes(){
-        TabSig[] Aux=G.TABS;int cont=0,cont2=0;
-        TabSig[] Aux2=new TabSig[cont];
-        for(int i=0;i<Aux.length;i++){if(Aux[i].getNumero()==0){break;}
-        else{cont++;}}
-        for(int i=0;i<Aux.length;i++){if(Aux[i].getNumero()==0){break;}
-        else{Aux2[cont]=new TabSig(); 
-        Aux2[cont].setCarcter(Aux[i].gz);}
-        
-        G.TABS=new TabSig[cont];
-        for(int i=0;i<Aux.length;i++){if(Aux[i].getNumero()==0){break;}
-        else{
-            for(int b=0;b<Aux2.length;b++){
-                if(){}
+        String Sig="";
+        int cont=0;
+        String[] A=new String[1000];
+        for(int i=0;i<G.TABS.length;i++){
+            if(G.TABS[i].getNumero()==0){break;}
+            else{
+                Sig=G.TABS[i].getNumero()+";";
+                for(int j=0;j<G.TABS.length;j++){
+                    if(G.TABS[j].getNumero()==0){break;}
+                    else{
+                        if(G.TABS[j].getNumero()==G.TABS[i].getNumero()){
+                            Sig=Sig+","+G.TABS[j].getSiguiente();
+                        }
+                    }
+                }
+                A[cont]=Sig+";"+G.TABS[i].getCarcter();
+                cont++;
             }
-        }}
+        }
+        G.TABS=new TabSig[cont];
+        for(int i=0;i<cont;i++){
+            String[] N=A[i].split(";");
+            G.TABS[i]=new TabSig();
+            G.TABS[i].setNumero(Integer.parseInt(N[0]));
+            G.TABS[i].setSiguiente(N[1]);
+            G.TABS[i].setCarcter(N[2]);
+        }
+        int[] a=new int[cont];
+        for(int i=0;i<cont;i++){a[i]=G.TABS[i].getNumero();}
+        Arrays.sort(a);
+        TabSig[] T=new TabSig[cont];
+        int q=0;
+        for(int num:a){
+            for(int i=0;i<cont;i++){
+                if(num==G.TABS[i].getNumero()){
+                    T[q]=new TabSig();
+                    T[q].setNumero(num);
+                    T[q].setCarcter(G.TABS[i].getCarcter());
+                    T[q].setSiguiente(G.TABS[i].getSiguiente());
+                    G.TABS[i].setNumero(0);
+                    q++;
+                }
+            }
+        }
+        for(int i=0;i<cont;i++){
+            if(i==0){}
+            else{
+                if(T[i].getNumero()==T[i-1].getNumero()){T[i].setNumero(0);}
+            }
+        }
+        int CR=0;
+        for(int i=0;i<cont;i++){
+            if(T[i].getNumero()!=0){
+                CR++;
+            }
+        }
+        G.TABS=new TabSig[CR];
+        int C=0;
+        for(int i=0;i<cont;i++){
+            if(T[i].getNumero()!=0){
+                G.TABS[C]=new TabSig();
+                G.TABS[C].setNumero(T[i].getNumero());
+                G.TABS[C].setCarcter(T[i].getCarcter());
+                G.TABS[C].setSiguiente(T[i].getSiguiente());
+                C++;
+            }
+        }
+        for(int i=0;i<C;i++){
+            System.out.println(G.TABS[i].getCarcter()+" "+G.TABS[i].getNumero()+" "+G.TABS[i].getSiguiente());
+        }
+        CrearTablaTransiciones();
+    }
+    
+    void CrearTablaTransiciones(){
+        try{
+        PrintWriter pw = null;
+        FileWriter Fw=new FileWriter ("C:\\Users\\Usuario\\Desktop\\TabTran"+contadorArbol+".dot");
+        pw = new PrintWriter(Fw);
+        pw.println("digraph G{");
+        pw.println("node [shape=plaintext]");
+        pw.println("a [label=<<table border=\"0\" cellborder=\"1\" cellspacing=\"0\">\n");
+        //Tabla de transiciones
+        //se deben de omitir las desigualdades para que funcione
+        //falta correccion
+        pw.println("<tr>");
+        pw.println("<td><b>ESTADOS</b></td>");
+        for(TabSig n:G.TABS){
+            pw.println("<td><b>"+n.getCarcter()+"</b></td>");
+        }
+        pw.println("</tr>");
+        pw.println("</table>>];\n" +
+                    "}");
+        pw.close();
+                String[] cmd = new String[5];
+                cmd[0] = "C:\\Program Files (x86)\\Graphviz2.38\\bin\\dot.exe";
+                cmd[1] = "-Tpng";
+                cmd[2] = "C:\\Users\\Usuario\\Desktop\\TabTran"+contadorArbol+".dot";
+                cmd[3] = "-o";
+                cmd[4] = "C:\\Users\\Usuario\\Desktop\\RC\\Practica1\\src\\Archivos\\Tabla Transiciones\\TabTran"+contadorArbol+".png";   
+                Runtime rt = Runtime.getRuntime();
+                rt.exec( cmd ); 
+        
+        }catch (IOException ex) {
+            Logger.getLogger(METODOS.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
 }
