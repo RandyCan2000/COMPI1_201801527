@@ -19,4 +19,5 @@ public class Globales {
     public static Stack<Error> ERROR=null;
     public static TabSig[] TABS=null; 
     public static String Ruta;
+    public static int EXPREGAEVALUAR;
 }

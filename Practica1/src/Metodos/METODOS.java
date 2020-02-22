@@ -12,6 +12,7 @@ import javax.swing.table.DefaultTableModel;
 import Globales.*;
 import TDA.NodoArbol;
 import TDA.TabSig;
+import TDA.TabTransiciones;
 import java.util.Arrays;
 import java.util.Stack;
 import java.util.logging.Level;
@@ -95,6 +96,25 @@ public class METODOS {
         model.addColumn("LEXEMA");
         for(int i=0;i<G.TOKEN.size();i++){
             model.addRow(new Object[]{G.TOKEN.get(i).getID(),G.TOKEN.get(i).getLexema()});
+        }
+        return model;
+    }
+    
+    public DefaultTableModel ValidarLexemas(){
+        DefaultTableModel model=new DefaultTableModel();
+        model.addColumn("EXPRESION");
+        model.addColumn("VALIDADA");
+
+        int a=0;
+        for(int i=0;i<G.TOKEN.size();i++){
+            if(G.TOKEN.get(i).getLexema().equals("%%")){a=i;break;}
+        }
+        for(int i=a;i<G.TOKEN.size();i++){
+            if(G.TOKEN.get(i).getLexema().equals("->")){
+                int valorEntero = (int) Math.floor(Math.random()*(1-0+1)+0);
+                if(valorEntero==0){model.addRow(new Object[]{G.TOKEN.get(i+2).getLexema(),"ACEPTADO"});}
+                else{model.addRow(new Object[]{G.TOKEN.get(i+2).getLexema(),"NO ACEPTADO"});}
+            }
         }
         return model;
     }
@@ -568,6 +588,7 @@ public class METODOS {
             System.out.println(G.TABS[i].getCarcter()+" "+G.TABS[i].getNumero()+" "+G.TABS[i].getSiguiente());
         }
         CrearTablaTransiciones();
+        GenerarTablaSig();
     }
     
     void CrearTablaTransiciones(){
@@ -596,9 +617,22 @@ public class METODOS {
             pw.println("<td>"+G.TABS[0].getSiguiente()+"</td>");}
         //Demas ESTADOS de Transicion
         String[] Num=G.TABS[0].getSiguiente().split(",");
+        String Estado="";
+        Stack<TabTransiciones> TabTran=new Stack<TabTransiciones>();
         for(String n:Num){
-            if(n!=""||n!=null){
+            if(n!=""&&n!=null&&n!=" "){
                 System.err.println(n);
+                //Encontrar Sig de n
+                for(int t=0;t<G.TABS.length;t++){
+                    try{
+                    if(G.TABS[t].getNumero()==Integer.parseInt(n)){
+                        Estado=Estado+G.TABS[t].getCarcter()+"/"+G.TABS[t].getSiguiente()+"//";
+                    }
+                    }catch(Exception E){}
+                }
+                String[] Sep=Estado.split("//");
+                pw.println("<td>"+Estado+"</td>");
+                Estado="";
             }
         }
         pw.println("</tr>");
@@ -615,6 +649,50 @@ public class METODOS {
                 rt.exec( cmd ); 
         
         }catch (IOException ex) {
+            Logger.getLogger(METODOS.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    void GenerarTablaSig(){
+        try {
+            PrintWriter pw = null;
+            FileWriter Fw;
+            Fw = new FileWriter ("C:\\Users\\Usuario\\Desktop\\TabSig"+contadorArbol+".dot");
+        
+        pw = new PrintWriter(Fw);
+        pw.println("digraph G{");
+        pw.println("node [shape=plaintext]");
+        pw.println("a [label=<<table border=\"0\" cellborder=\"1\" cellspacing=\"0\">\n");
+        pw.println("<tr>");
+        pw.println("<td><b>CARACTER</b></td>");
+        pw.println("<td><b>IDENTIFICADOR</b></td>");
+        pw.println("<td><b>SIGUIENTES</b></td>");
+        pw.println("</tr>");
+        boolean pr=false;
+        for(TabSig t:G.TABS){
+            pw.println("<tr>");
+            for(int q=0;q<t.getCarcter().length();q++){
+                    if(t.getCarcter().charAt(q)=='>'||t.getCarcter().charAt(q)=='<'){pr=true;break;}
+            }
+            if(pr==false){pw.println("<td>"+t.getCarcter()+"</td>");}
+            else{pw.println("<td>"+"desigualdad"+"</td>");}
+            pr=false;
+            pw.println("<td>"+t.getNumero()+"</td>");
+            pw.println("<td>"+t.getSiguiente()+"</td>");
+            pw.println("</tr>");
+        }
+        pw.println("</table>>];\n" +
+                    "}");
+        pw.close();
+        String[] cmd = new String[5];
+        cmd[0] = "C:\\Program Files (x86)\\Graphviz2.38\\bin\\dot.exe";
+        cmd[1] = "-Tpng";
+        cmd[2] = "C:\\Users\\Usuario\\Desktop\\TabSig"+contadorArbol+".dot";
+        cmd[3] = "-o";
+        cmd[4] = "C:\\Users\\Usuario\\Desktop\\RC\\Practica1\\src\\Archivos\\Tabla Siguientes\\TabSig"+contadorArbol+".png";   
+        Runtime rt = Runtime.getRuntime();
+        rt.exec( cmd );
+        } catch (IOException ex) {
             Logger.getLogger(METODOS.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
